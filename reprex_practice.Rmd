@@ -37,12 +37,25 @@ mack_creek_lengths <- mack_creek_vertebrates %>%
   clean_names() %>% 
   select(year:sampledate) %>% 
   filter(section == "CC") %>% 
-  mutate(across(where(is.character, tolower))) %>% 
+  mutate(across(where(is.character), tolower)) %>% 
   drop_na(species) %>% 
   group_by(species) %>% 
   summarize(mean_length_cm = mean(length1, na.rm = TRUE),
             sd_length_cm = sd(length1, na.rm = TRUE)) %>% 
   ungroup()
+```
+
+
+```{r}
+df <- tribble(
+  ~garment, ~yarn_wt, ~yarn_fiber,
+  "Sweater", "aran_wt", "alpaca",
+  "cowl", "worsted_wt", "Cashmere",
+  "mittens", "fingering_wt", "Merino"
+)
+
+df_lower <- df %>% 
+  mutate(across(where(is.character), tolower))
 ```
 
 ### reprex 2
@@ -55,10 +68,24 @@ mack_creek_vertebrates %>%
   clean_names() %>% 
   filter(species == "ONCL") %>% 
   ggplot(aes(x = length1, y = weight)) +
-         geom_point(aes(shape = 12), color = "purple") +
+         geom_point(aes(shape = species), color = "purple") +
          theme_minimal() +
          labs(x = "Cutthroat trout length (cm)",
               y = "Weight (g)")
 ```
+
+```{r}
+df_2 <- tribble(
+  ~garment, ~yardage, ~skeins,
+  "scarf", 300, 2,
+  "wrap", 400, 3,
+  "socks", 250, 1
+)
+
+df_2 %>% 
+  ggplot(aes(x = yardage, y = skeins)) +
+  geom_point(aes(shape = garment), color = "blue")
+```
+
 
 ## End
